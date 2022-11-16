@@ -1,19 +1,19 @@
-import {Request, Response } from "express";
+import { Request, Response } from "express";
 import { usersDB } from "../db/users";
 
-
 export class LoginController {
-    verifyLogin(request: Request, response: Response){
-                
-        const {email, password} = request.body;
-        
-        const verifyUser = usersDB.find(user => user.email === email && user.password === password)
+  verifyLogin(request: Request, response: Response) {
+    const { email, password } = request.body;
 
-        console.log("===verifyuser===", verifyUser)
-        if(!verifyUser){
-            return response.status(404).json({error: "Usuário não encontrado."});
-        }
+    const verifyUser = usersDB.find(
+      (user) => user.email === email && user.password === password
+    );
 
-        return response.json(verifyUser.toJson());
+    console.log("===verifyuser===", verifyUser);
+    if (!verifyUser) {
+      return response.status(401).json({ error: "Email ou senha inválidos." });
     }
+
+    return response.json(verifyUser.toJson());
+  }
 }

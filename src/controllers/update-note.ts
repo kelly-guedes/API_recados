@@ -7,21 +7,14 @@ export class UpdateNoteController {
 
     const { description } = request.body;
 
-    const userIndex = usersDB.findIndex(user => user.id === userId)
-      
-      const note = usersDB[userIndex].notes
-      .find((note)=> note.id === id)
-    
-        if (!note) {
-            return response.status(404).json({ error: "Nota não localizada" });
-          }
-      
-        try {
-            note.updateInformation(description);
-        } catch (err: any) {
-            return response.status(400).json({ error: err.message });
-        }
+    const userIndex = usersDB.findIndex((user) => user.id === userId);
 
-      return response.json(note)
+    try {
+      usersDB[userIndex]?.updateNote(id, description);
+    } catch (err: any) {
+      return response.status(400).json({ error: err.message });
+    }
+
+    return response.json("Nota atualizada com sucesso!");
   }
 }

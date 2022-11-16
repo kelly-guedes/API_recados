@@ -1,18 +1,16 @@
-import {Request, Response, NextFunction} from 'express'
-import { usersDB } from '../db/users';
+import { Request, Response, NextFunction } from "express";
+import { usersDB } from "../db/users";
 
-export class verifyUserNotesMiddleware{
-    verifyUserNotes(request: Request, response: Response, next: NextFunction) {
-        const { userId } = request.params;
-        
-        const user = usersDB.find(
-            user => userId === user.id
-          );
-      
-        if (!user) {
-            return response.status(404).json({ message: "Usuário não encontrado." });
-        }
+export class VerifyUserNotesMiddleware {
+  verifyUserNotes(request: Request, response: Response, next: NextFunction) {
+    const { userId } = request.params;
 
-        next()
+    const user = usersDB.find((user) => userId === user.id);
+
+    if (!user) {
+      return response.status(404).json({ message: "Usuário não encontrado." });
     }
- }
+
+    next();
+  }
+}

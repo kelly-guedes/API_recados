@@ -1,6 +1,6 @@
-import express, {Request, Response} from 'express';
-import appRoutes from "./routes"
-import cors from "cors"
+import express, { Request, Response } from "express";
+import appRoutes from "./routes";
+import cors from "cors";
 
 const app = express();
 
@@ -9,6 +9,6 @@ app.use(cors());
 
 // app.use(express.urlencoded({ extended: false }));
 
-appRoutes(app)
+appRoutes(app);
 
 app.listen(process.env.PORT || 8080, () => console.log("API is running..."));

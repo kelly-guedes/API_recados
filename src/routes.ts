@@ -1,4 +1,4 @@
-import { Express } from "express"
+import { Express } from "express";
 import { ChangeStatusNotesController } from "./controllers/change-status-notes";
 import { CreateNoteController } from "./controllers/create-notes";
 import { CreateUserController } from "./controllers/create-users";
@@ -14,33 +14,69 @@ import { ValidatePasswordRegexMiddleware } from "./middlewares/validate-password
 import { ValidateRepeatPassMiddleware } from "./middlewares/validate-repeat-pass";
 import { ValidateSizeUserMiddleware } from "./middlewares/validate-size-user";
 import { VerifyArchivedParamsMiddleware } from "./middlewares/verify-archived-params";
-import { veriIdNotesMiddleware } from "./middlewares/verify-Id-Notes";
-import { verifyUserNotesMiddleware } from "./middlewares/verify-user-notes";
+import { VeriIdNotesMiddleware } from "./middlewares/verify-Id-Notes";
+import { VerifyUserNotesMiddleware } from "./middlewares/verify-user-notes";
 
+export default (app: Express) => {
+  app.get("/", (request, response) => {
+    return response.send("OK");
+  });
 
-export default (app: Express) =>{
-    app.get('/', (request, response) => {
-        return response.send('OK');
-        });
-
-
-    app.post('/users', 
-    new ValidateSizeUserMiddleware().validateSizeUser, 
+  app.post(
+    "/users",
     new ValidateUserMiddleware().validateUser,
+    new ValidateSizeUserMiddleware().validateSizeUser,
     // new ValidateEmailRegexMiddleware().validateEmailRegex,
     new ValidatePasswordRegexMiddleware().validatePasswordRegex,
     new ValidateRepeatPassMiddleware().validateRepeatPass,
-    new CreateUserController().create)
+    new CreateUserController().create
+  );
 
-    app.post('/users/login', new ValidateLoginMiddleware().validateLogin, new ValidatePasswordRegexMiddleware().validatePasswordRegex,new LoginController().verifyLogin )
+  app.post(
+    "/users/login",
+    new ValidateLoginMiddleware().validateLogin,
+    new ValidatePasswordRegexMiddleware().validatePasswordRegex,
+    new LoginController().verifyLogin
+  );
 
-    app.post('/user/:userId/notes', new verifyUserNotesMiddleware().verifyUserNotes,new CreateNoteController().create)
-    app.get('/user/:userId/notes', new verifyUserNotesMiddleware().verifyUserNotes,new GetAllNotesController().getAllNotes)
-    app.get('/user/:userId/notes/:id', new verifyUserNotesMiddleware().verifyUserNotes, new veriIdNotesMiddleware().verifyIdNotes, new GetNoteByIdController().getNoteById)
-    app.delete('/user/:userId/notes/:id', new verifyUserNotesMiddleware().verifyUserNotes,new veriIdNotesMiddleware().verifyIdNotes, new DeleteNoteController().deleteNote)  
-    app.put('/user/:userId/notes/:id', new verifyUserNotesMiddleware().verifyUserNotes, new veriIdNotesMiddleware().verifyIdNotes, new UpdateNoteController().updateNote)
-    app.put('/user/:userId/notes/:id/archived', new verifyUserNotesMiddleware().verifyUserNotes, new veriIdNotesMiddleware().verifyIdNotes, new VerifyArchivedParamsMiddleware().verifyArchivedParams,new ChangeStatusNotesController().change)
+  app.post(
+    "/user/:userId/notes",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new CreateNoteController().create
+  );
 
+  app.get(
+    "/user/:userId/notes",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new GetAllNotesController().getAllNotes
+  );
 
+  app.get(
+    "/user/:userId/notes/:id",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new VeriIdNotesMiddleware().verifyIdNotes,
+    new GetNoteByIdController().getNoteById
+  );
 
-}
+  app.delete(
+    "/user/:userId/notes/:id",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new VeriIdNotesMiddleware().verifyIdNotes,
+    new DeleteNoteController().deleteNote
+  );
+
+  app.put(
+    "/user/:userId/notes/:id",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new VeriIdNotesMiddleware().verifyIdNotes,
+    new UpdateNoteController().updateNote
+  );
+
+  app.put(
+    "/user/:userId/notes/:id/archived",
+    new VerifyUserNotesMiddleware().verifyUserNotes,
+    new VeriIdNotesMiddleware().verifyIdNotes,
+    new VerifyArchivedParamsMiddleware().verifyArchivedParams,
+    new ChangeStatusNotesController().change
+  );
+};
