@@ -35,6 +35,18 @@ export class User {
     this._notes = [];
   }
 
+  static create(
+    id: string,
+    name: string,
+    email: string,
+    password: string
+  ): User {
+    const user = new User(name, email, password);
+    user._id = id;
+
+    return user;
+  }
+
   newNotes(note: Note) {
     this._notes.push(note);
   }

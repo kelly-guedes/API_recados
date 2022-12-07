@@ -15,10 +15,17 @@ export class Note {
   get achived(): boolean {
     return this._archived;
   }
+
   constructor(description: string) {
     this._id = crypto.randomUUID();
     this._description = description;
     this._archived = false;
+  }
+
+  static createNote(id: string, description: string): Note {
+    const note = new Note(description);
+    note._id = id;
+    return note;
   }
 
   updateInformation(description: string) {
