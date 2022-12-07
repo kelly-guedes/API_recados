@@ -1,3 +1,4 @@
+import { Express } from "express";
 import { NoteController } from "./controllers/note.controller";
 import { UserController } from "./controllers/user.controller";
 import { ValidateUserMiddleware } from "./middlewares/validade-users";
