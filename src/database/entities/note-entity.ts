@@ -12,6 +12,12 @@ export class NoteEntity {
   @Column()
   archived!: boolean;
 
+  @Column({ name: "create_at" })
+  createAt!: Date;
+
+  @Column({ name: "update_at" })
+  updateAt!: Date;
+
   @Column({ name: "id_user" })
   userID!: string;
 

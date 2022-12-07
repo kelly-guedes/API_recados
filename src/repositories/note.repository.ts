@@ -51,4 +51,48 @@ export default class NotesRepository {
     });
     return notesEntities;
   }
+
+  async update(userId: string, id: string, description: string) {
+    const manager = pgHelper.client.manager;
+
+    await manager.update(
+      NoteEntity,
+      { id },
+      { description, updateAt: new Date() }
+    );
+
+    const noteEntity = manager.findOne(NoteEntity, {
+      where: {
+        id,
+      },
+    });
+
+    return noteEntity;
+  }
+
+  async renoveNote(id: string) {
+    const manager = pgHelper.client.manager;
+
+    const noteEntity = manager.findOne(NoteEntity, {
+      where: {
+        id,
+      },
+    });
+
+    await manager.delete(NoteEntity, { id });
+    return noteEntity;
+  }
+
+  async changeArchived(id: string, archived: boolean) {
+    const manager = pgHelper.client.manager;
+
+    await manager.update(NoteEntity, { id }, { archived });
+
+    const noteEntity = manager.findOne(NoteEntity, {
+      where: {
+        id,
+      },
+    });
+    return noteEntity;
+  }
 }

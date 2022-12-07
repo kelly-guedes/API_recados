@@ -1,15 +1,24 @@
 import { Request, Response, NextFunction } from "express";
-import { usersDB } from "../db/users";
+import { NoteEntity } from "../database/entities/note-entity";
+import { pgHelper } from "../database/pg-helper";
 
 export class VeriIdNotesMiddleware {
-  verifyIdNotes(request: Request, response: Response, next: NextFunction) {
-    const { userId, id } = request.params;
+  async verifyIdNotes(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    const { id } = request.params;
 
-    const indexUser = usersDB.findIndex((user) => user.id === userId);
+    const manager = pgHelper.client.manager;
 
-    const note = usersDB[indexUser].notes.find((note) => note.id === id);
+    const noteFound = await manager.findOne(NoteEntity, {
+      where: {
+        id: id,
+      },
+    });
 
-    if (!note) {
+    if (!noteFound) {
       return response.status(404).json({ message: "Recado não encontrado." });
     }
 

@@ -3,7 +3,7 @@ import { usersDB } from "../db/users";
 import { Note } from "../models/note";
 import NotesRepository from "../repositories/note.repository";
 
-export class CreateNoteController {
+export class NoteController {
   async createNewNote(request: Request, response: Response) {
     const { description } = request.body;
 
@@ -12,6 +12,7 @@ export class CreateNoteController {
     const newNote = new Note(description);
 
     const repository = new NotesRepository();
+
     await repository.createNote(userId, newNote);
 
     return response.json(newNote.toJson());
@@ -23,6 +24,7 @@ export class CreateNoteController {
     const { description, archived } = request.query;
 
     const repository = new NotesRepository();
+
     const notesUser = await repository.getAllNotesUserId(
       userId,
       description as string,
@@ -31,50 +33,32 @@ export class CreateNoteController {
     return response.json(notesUser);
   }
 
-  getNoteById(request: Request, response: Response) {
-    const { userId, id } = request.params;
-
-    const userIndex = usersDB.findIndex((user) => user.id === userId);
-
-    let note = usersDB[userIndex].notes.find((note) => note.id === id);
-
-    return response.json(note?.toJson());
-  }
-
-  updateNote(request: Request, response: Response) {
+  async updateNote(request: Request, response: Response) {
     const { userId, id } = request.params;
 
     const { description } = request.body;
 
-    const userIndex = usersDB.findIndex((user) => user.id === userId);
+    const repository = new NotesRepository();
+    const note = await repository.update(userId, id, description);
 
-    try {
-      usersDB[userIndex]?.updateNote(id, description);
-    } catch (err: any) {
-      return response.status(400).json({ error: err.message });
-    }
-
-    return response.json("Nota atualizada com sucesso!");
+    return response.json(note);
   }
-  change(request: Request, response: Response) {
-    const { userId, id } = request.params;
+  async change(request: Request, response: Response) {
+    const { id } = request.params;
 
     const { archived } = request.body;
 
-    const noteFound = usersDB.find((note) => id === note.id);
+    const repository = new NotesRepository();
 
-    noteFound?.changeStatus(id, archived);
-    return response.status(200).json(noteFound);
+    const note = await repository.changeArchived(id, archived);
+
+    return response.status(200).json(note);
   }
-  deleteNote(request: Request, response: Response) {
-    const { userId, id } = request.params;
+  async deleteNote(request: Request, response: Response) {
+    const { id } = request.params;
 
-    const indexUser = usersDB.findIndex((user) => user.id === userId);
-
-    const note = usersDB[indexUser].notes.find((note) => note.id === id);
-
-    usersDB[indexUser].removeMote(id);
-
+    const repository = new NotesRepository();
+    const note = await repository.renoveNote(id);
     return response
       .status(200)
       .json(`Nota:  ${note?.description},  excluída com sucesso!!`);
